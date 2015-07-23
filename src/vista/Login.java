@@ -24,6 +24,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import beans.UsuarioBeans;
 import entidad.Usuario;
+import java.awt.Cursor;
 import sistema.Service;
 
 /**
@@ -37,6 +38,20 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         initComponents();
         this.setLocationRelativeTo(null);
+    }
+    
+    private void busy(int estado){
+        switch (estado) {
+            case 1:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                break;
+            case 2:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                break;
+            default:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)); 
+                break;
+        }
     }
     
     private void iniciarSesion(){
@@ -65,8 +80,8 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "El nombre de usuario y/o contraseña no son validos.\nIntentos restantes "+intentos);
             }else if(u!=null){
                 this.setVisible(false);
-                Menu menu = new Menu();
-                menu.setTitle("Gestión Labocar - Usuario ["+u.getNombre()+" "+u.getApellido()+"] - "+u.getPrivilegio());
+                Menu menu = new Menu(u.getNombre(),u.getApellido(),u.getUsuario(),u.getPrivilegio(),u.getEnabled());
+                menu.setTitle("NeoMarket - Usuario ["+u.getNombre()+" "+u.getApellido()+"] - "+u.getPrivilegio());
                 menu.setExtendedState(JFrame.MAXIMIZED_BOTH);
                 menu.setVisible(true);
             }

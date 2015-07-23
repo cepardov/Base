@@ -17,6 +17,7 @@
 package vista;
 
 import beans.UsuarioBeans;
+import java.awt.Cursor;
 import sistema.Service;
 
 /**
@@ -25,11 +26,30 @@ import sistema.Service;
  */
 public class Menu extends javax.swing.JFrame {
     UsuarioBeans usuariobeans=new UsuarioBeans();
-    /**
-     * Creates new form Menu
-     */
-    public Menu() {
+    
+    public Menu() {}
+    public Menu(String nombre, String apellido, String usuario, String privilegio, String enabled) {
         initComponents();
+        this.busy(1);
+        this.btnUsuario.setText(nombre+" "+apellido);
+        this.busy(0);
+    }
+    /**
+     * Muestra cursor de carga mientras reliza una operación
+     * @param estado 0=Normal, 1=cargando
+     */
+    private void busy(int estado){
+        switch (estado) {
+            case 1:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                break;
+            case 0:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                break;
+            default:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)); 
+                break;
+        }
     }
     
     /**
@@ -41,13 +61,27 @@ public class Menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jDesktopPane1 = new javax.swing.JDesktopPane();
+        jLabel1 = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
+        btnUsuario = new javax.swing.JMenu();
+        btnCerrarSesion = new javax.swing.JMenuItem();
         btnCerrar = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jMenu1.setText("Usuario");
+        jLabel1.setText("Barra Estado");
+        jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        btnUsuario.setText("Usuario");
+
+        btnCerrarSesion.setText("Cerrar Sesión");
+        btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarSesionActionPerformed(evt);
+            }
+        });
+        btnUsuario.add(btnCerrarSesion);
 
         btnCerrar.setText("Cerrar");
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
@@ -55,9 +89,9 @@ public class Menu extends javax.swing.JFrame {
                 btnCerrarActionPerformed(evt);
             }
         });
-        jMenu1.add(btnCerrar);
+        btnUsuario.add(btnCerrar);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(btnUsuario);
 
         setJMenuBar(jMenuBar1);
 
@@ -65,11 +99,15 @@ public class Menu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 671, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 397, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -79,6 +117,12 @@ public class Menu extends javax.swing.JFrame {
         // TODO add your handling code here:
         new Service().cerrarApp();
     }//GEN-LAST:event_btnCerrarActionPerformed
+
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+        // TODO add your handling code here:
+        new Login().setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     /**
      * @param args the command line arguments
@@ -117,7 +161,10 @@ public class Menu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnCerrar;
-    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem btnCerrarSesion;
+    private javax.swing.JMenu btnUsuario;
+    private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
     // End of variables declaration//GEN-END:variables
 }
