@@ -18,7 +18,10 @@ package vista;
 
 import beans.UsuarioBeans;
 import java.awt.Cursor;
+import java.util.Timer;
+import java.util.TimerTask;
 import sistema.Service;
+import utilidades.DateTime;
 
 /**
  *
@@ -26,12 +29,17 @@ import sistema.Service;
  */
 public class Menu extends javax.swing.JFrame {
     UsuarioBeans usuariobeans=new UsuarioBeans();
-    
+    DateTime dt=new DateTime();
+    Timer timer;
+    public String estado="";
     public Menu() {}
     public Menu(String nombre, String apellido, String usuario, String privilegio, String enabled) {
         initComponents();
         this.busy(1);
+        timer = new Timer();        
+        timer.schedule(new RemindTask(), 0, 30000);
         this.btnUsuario.setText(nombre+" "+apellido);
+        estado="Bienvenido (a) "+nombre+" "+apellido;
         this.busy(0);
     }
     /**
@@ -52,6 +60,14 @@ public class Menu extends javax.swing.JFrame {
         }
     }
     
+    private void reloj(){
+        this.lblHora.setText(dt.gethoraHM());
+    }
+    
+    private void barra(){
+        this.lblEstado.setText(estado);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -62,7 +78,8 @@ public class Menu extends javax.swing.JFrame {
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
-        jLabel1 = new javax.swing.JLabel();
+        lblEstado = new javax.swing.JLabel();
+        lblHora = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         btnUsuario = new javax.swing.JMenu();
         btnCerrarSesion = new javax.swing.JMenuItem();
@@ -70,8 +87,12 @@ public class Menu extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
-        jLabel1.setText("Barra Estado");
-        jLabel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        lblEstado.setText("Barra Estado");
+        lblEstado.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        lblHora.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblHora.setText("HH:mm");
+        lblHora.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnUsuario.setText("Usuario");
 
@@ -100,14 +121,19 @@ public class Menu extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jDesktopPane1)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 671, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(lblEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblHora, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lblEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addComponent(lblHora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
 
         pack();
@@ -158,13 +184,32 @@ public class Menu extends javax.swing.JFrame {
             }
         });
     }
+    
+    class RemindTask extends TimerTask {
+
+        @Override
+        public void run() {
+            reloj();
+            barra();
+            //
+//            cargaTablaInforme();
+//            try {
+////                BuscaCita();
+//            } catch (ClassNotFoundException ex) {
+//                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (SQLException ex) {
+//                Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+        }        
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnCerrar;
     private javax.swing.JMenuItem btnCerrarSesion;
     private javax.swing.JMenu btnUsuario;
     private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JLabel lblEstado;
+    private javax.swing.JLabel lblHora;
     // End of variables declaration//GEN-END:variables
 }
