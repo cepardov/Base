@@ -19,7 +19,6 @@ package vista;
 import beans.UsuarioBeans;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
-import utilidades.Barra;
 
 /**
  *
@@ -27,7 +26,6 @@ import utilidades.Barra;
  */
 public class Usuarios extends javax.swing.JInternalFrame {
     UsuarioBeans usuariobeans=new UsuarioBeans();
-    Barra barra = new Barra();
     Object[][] dtPrev;
     int fila;
     /**
@@ -39,8 +37,11 @@ public class Usuarios extends javax.swing.JInternalFrame {
     }
     
     public final void inicializa(){
-        barra.setBarra("daweda");
         this.cargaTablaUsuario();
+        this.lblErrorBusqueda.setText("");
+        this.btnGuardar.setEnabled(true);
+        this.btnModificar.setEnabled(false);
+        this.btnEliminar.setEnabled(false);
     }
     
     private boolean verificaDatos(){
@@ -139,14 +140,22 @@ public class Usuarios extends javax.swing.JInternalFrame {
             this.txtClaveReingresado.setText(usuariobeans.getClave());
             this.cbPrivilegio.setSelectedItem(usuariobeans.getPrivilegio());
             this.chkEnable.setSelected(Boolean.valueOf(usuariobeans.getEnabled()));
+            this.lblErrorBusqueda.setText("");
+            this.btnGuardar.setEnabled(false);
+            this.btnModificar.setEnabled(true);
+            this.btnEliminar.setEnabled(true);
         } else {
+            this.lblErrorBusqueda.setText("No hemos encontrado lo que búscas!");
+            this.btnGuardar.setEnabled(true);
+            this.btnModificar.setEnabled(false);
+            this.btnEliminar.setEnabled(false);
             return true;
         }
         return false;
     }
     
     public final void cargaTablaUsuario(){
-        String[] columNames = {"","","","","","","",""};  
+        String[] columNames = {"ID","RUT","Nombre","Apellido","Usuario","Clave","Estado","Tipo"};  
         dtPrev = usuariobeans.getUsuarios();
         DefaultTableModel datos = new DefaultTableModel(dtPrev,columNames);                        
         tabla.setModel(datos);
@@ -178,6 +187,22 @@ public class Usuarios extends javax.swing.JInternalFrame {
         tabla.getColumnModel().getColumn(0).setMinWidth(0);
         tabla.getColumnModel().getColumn(0).setPreferredWidth(0);
     }
+    
+    private void limpiar(){
+        this.lblIdUsuario.setText("No Definido");
+        this.txtRut.setText("");
+        this.txtNombre.setText("");
+        this.txtApellido.setText("");
+        this.txtUsuario.setText("");
+        this.txtClave.setText("");
+        this.txtClaveReingresado.setText("");
+        this.cbPrivilegio.setSelectedItem("Seleccione");
+        this.chkEnable.setSelected(false);
+        this.lblErrorBusqueda.setText(" ");
+        this.btnGuardar.setEnabled(true);
+        this.btnModificar.setEnabled(false);
+        this.btnEliminar.setEnabled(false);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -207,6 +232,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         chkEnable = new javax.swing.JCheckBox();
         cbPrivilegio = new javax.swing.JComboBox();
+        lblErrorBusqueda = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tabla = new javax.swing.JTable();
@@ -248,6 +274,9 @@ public class Usuarios extends javax.swing.JInternalFrame {
 
         cbPrivilegio.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Seleccione", "Administrador", "Vendedor" }));
 
+        lblErrorBusqueda.setForeground(new java.awt.Color(230, 17, 17));
+        lblErrorBusqueda.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -259,7 +288,9 @@ public class Usuarios extends javax.swing.JInternalFrame {
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblIdUsuario)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblErrorBusqueda, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtRut, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -300,7 +331,8 @@ public class Usuarios extends javax.swing.JInternalFrame {
                     .addComponent(lblIdUsuario)
                     .addComponent(txtRut, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(btnBuscar))
+                    .addComponent(btnBuscar)
+                    .addComponent(lblErrorBusqueda))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
@@ -346,7 +378,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -375,6 +407,11 @@ public class Usuarios extends javax.swing.JInternalFrame {
         });
 
         btnNuevo.setText("Nuevo/Borrar Formulario");
+        btnNuevo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoActionPerformed(evt);
+            }
+        });
 
         btnCerrar.setText("Cerrar");
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
@@ -480,6 +517,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(null,"Error: "+usuariobeans.getError(), "¡ups! Algo inesperado ha pasado", JOptionPane.ERROR_MESSAGE);
             } else {
                 this.cargaTablaUsuario();
+                this.limpiar();
                 this.btnGuardar.setEnabled(true);
                 this.btnModificar.setEnabled(false);
                 this.btnEliminar.setEnabled(false);
@@ -500,6 +538,11 @@ public class Usuarios extends javax.swing.JInternalFrame {
             this.buscar();
         }
     }//GEN-LAST:event_tablaMouseClicked
+
+    private void btnNuevoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevoActionPerformed
+        // TODO add your handling code here:
+        this.limpiar();
+    }//GEN-LAST:event_btnNuevoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -523,6 +566,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JLabel lblErrorBusqueda;
     private javax.swing.JLabel lblIdUsuario;
     private javax.swing.JTable tabla;
     private javax.swing.JTextField txtApellido;

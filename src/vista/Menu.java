@@ -16,12 +16,12 @@
  */
 package vista;
 
+
 import beans.UsuarioBeans;
 import java.awt.Cursor;
 import java.util.Timer;
 import java.util.TimerTask;
 import sistema.Service;
-import utilidades.Barra;
 import utilidades.DateTime;
 
 /**
@@ -30,7 +30,7 @@ import utilidades.DateTime;
  */
 public class Menu extends javax.swing.JFrame {
     UsuarioBeans usuariobeans=new UsuarioBeans();
-    Barra barra=new Barra();
+    Usuarios usuario=new Usuarios();
     DateTime dt=new DateTime();
     Timer timer;
     
@@ -39,9 +39,8 @@ public class Menu extends javax.swing.JFrame {
         initComponents();
         this.busy(1);
         timer = new Timer();        
-        timer.schedule(new RemindTask(), 0, 5000);
+        timer.schedule(new RemindTask(), 0, 15000);
         this.btnUsuario.setText(nombre+" "+apellido);
-//        barra.setBarra("Bienvenido (a) "+nombre+" "+apellido);
         this.busy(0);
     }
     /**
@@ -67,7 +66,8 @@ public class Menu extends javax.swing.JFrame {
     }
     
     private void barraEstado(){
-        this.lblEstado.setText(barra.getBarra());
+        usuario.lblErrorBusqueda.setText("");
+        this.lblEstado.setText("Barra Estado");
     }
     
     /**
@@ -168,7 +168,6 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
         // TODO add your handling code here:
-        Usuarios usuario=new Usuarios();
         p.add(usuario);
         usuario.setTitle("Gestor de Usuarios");
         usuario.setVisible(true);
@@ -234,7 +233,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnUsuarios;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JLabel lblEstado;
+    public javax.swing.JLabel lblEstado;
     private javax.swing.JLabel lblHora;
     private javax.swing.JDesktopPane p;
     // End of variables declaration//GEN-END:variables
