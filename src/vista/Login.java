@@ -23,6 +23,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import beans.UsuarioBeans;
+import cl.cepardov.encriptar.Encript;
 import entidad.Usuario;
 import java.awt.Cursor;
 import sistema.Service;
@@ -38,6 +39,7 @@ public class Login extends javax.swing.JFrame {
     public Login() {
         initComponents();
         this.setLocationRelativeTo(null);
+        this.setTitle("Inicio de sesión - NeoMarket");
     }
     
     private void busy(int estado){
@@ -68,7 +70,7 @@ public class Login extends javax.swing.JFrame {
         } else {
             //Extrae información ingresada-
             String usuario=this.txtusuario.getText();
-            String clave=this.txtclave.getText();
+            String clave=Encript.Encriptar(this.txtclave.getText());
 
             usuariobeans.setUsuario(usuario);
             usuariobeans.setClave(clave);
@@ -80,10 +82,16 @@ public class Login extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(this, "El nombre de usuario y/o contraseña no son validos.\nIntentos restantes "+intentos);
             }else if(u!=null){
                 this.setVisible(false);
-                Menu menu = new Menu(u.getNombre(),u.getApellido(),u.getUsuario(),u.getPrivilegio(),u.getEnabled());
-                menu.setTitle("NeoMarket - Usuario ["+u.getNombre()+" "+u.getApellido()+"] - "+u.getPrivilegio());
-                menu.setExtendedState(JFrame.MAXIMIZED_BOTH);
-                menu.setVisible(true);
+                if("false".equals(u.getEnabled())){
+                    JOptionPane.showMessageDialog(null,"Los administradores del sistema han desabilitado el acceso a "+u.getNombre()+" "+u.getApellido()+". "
+                            + "\nComuniquese con el administrador del sistema.", "Inicio de sesión denegado", JOptionPane.ERROR_MESSAGE);
+                    this.setVisible(true);
+                } else {
+                    Menu menu = new Menu(u.getNombre(),u.getApellido(),u.getUsuario(),u.getPrivilegio(),u.getEnabled());
+                    menu.setTitle("NeoMarket - Usuario ["+u.getNombre()+" "+u.getApellido()+"] - "+u.getPrivilegio());
+                    menu.setExtendedState(JFrame.MAXIMIZED_BOTH);
+                    menu.setVisible(true);
+                }
             }
         }
     }

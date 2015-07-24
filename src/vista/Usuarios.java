@@ -16,7 +16,10 @@
  */
 package vista;
 
+import cl.cepardov.encriptar.Decript;
+import cl.cepardov.encriptar.Encript;
 import beans.UsuarioBeans;
+import java.awt.Cursor;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -34,6 +37,20 @@ public class Usuarios extends javax.swing.JInternalFrame {
     public Usuarios() {
         initComponents();
         this.inicializa();
+    }
+    
+    private void busy(int estado){
+        switch (estado) {
+            case 1:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                break;
+            case 2:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                break;
+            default:
+                this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR)); 
+                break;
+        }
     }
     
     public final void inicializa(){
@@ -82,7 +99,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
             usuariobeans.setNombre(nombre);
             usuariobeans.setApellido(apellido);
             usuariobeans.setUsuario(usuario);
-            usuariobeans.setClave(clave);
+            usuariobeans.setClave(Encript.Encriptar(clave));
             usuariobeans.setPrivilegio(privilegio);
             usuariobeans.setEnabled(enabled);
             return true;
@@ -136,8 +153,8 @@ public class Usuarios extends javax.swing.JInternalFrame {
             this.txtNombre.setText(usuariobeans.getNombre());
             this.txtApellido.setText(usuariobeans.getApellido());
             this.txtUsuario.setText(usuariobeans.getUsuario());
-            this.txtClave.setText(usuariobeans.getClave());
-            this.txtClaveReingresado.setText(usuariobeans.getClave());
+            this.txtClave.setText(Decript.Desencriptar(usuariobeans.getClave()));
+            this.txtClaveReingresado.setText(Decript.Desencriptar(usuariobeans.getClave()));
             this.cbPrivilegio.setSelectedItem(usuariobeans.getPrivilegio());
             this.chkEnable.setSelected(Boolean.valueOf(usuariobeans.getEnabled()));
             this.lblErrorBusqueda.setText("");
@@ -483,6 +500,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
         // TODO add your handling code here:
+        this.busy(1);
         if(this.verificaDatos()==true&&this.existencia()&&this.existenciaNombreUsuario()){
             System.out.println("Guardando usuario...");
             if(usuariobeans.save()==false){
@@ -494,6 +512,7 @@ public class Usuarios extends javax.swing.JInternalFrame {
                 this.btnEliminar.setEnabled(true);
             }
         }
+        this.busy(0);
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
