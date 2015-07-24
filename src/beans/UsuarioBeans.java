@@ -24,8 +24,14 @@ public class UsuarioBeans extends Usuario{
     public boolean update(){
         return usuarioDao.update(this);
     }
-    public boolean find(){
+    public boolean findByID(){
         return usuarioDao.findById(this);
+    }
+    public boolean findByRut(){
+        return usuarioDao.findByRut(this);
+    }
+    public boolean findByUsuario(){
+        return usuarioDao.findByUsuario(this);
     }
     public Object[][] getUsuarios(){
         return usuarioDao.getUsuario();

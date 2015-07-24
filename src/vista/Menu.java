@@ -21,6 +21,7 @@ import java.awt.Cursor;
 import java.util.Timer;
 import java.util.TimerTask;
 import sistema.Service;
+import utilidades.Barra;
 import utilidades.DateTime;
 
 /**
@@ -29,17 +30,18 @@ import utilidades.DateTime;
  */
 public class Menu extends javax.swing.JFrame {
     UsuarioBeans usuariobeans=new UsuarioBeans();
+    Barra barra=new Barra();
     DateTime dt=new DateTime();
     Timer timer;
-    public String estado="";
+    
     public Menu() {}
     public Menu(String nombre, String apellido, String usuario, String privilegio, String enabled) {
         initComponents();
         this.busy(1);
         timer = new Timer();        
-        timer.schedule(new RemindTask(), 0, 30000);
+        timer.schedule(new RemindTask(), 0, 5000);
         this.btnUsuario.setText(nombre+" "+apellido);
-        estado="Bienvenido (a) "+nombre+" "+apellido;
+//        barra.setBarra("Bienvenido (a) "+nombre+" "+apellido);
         this.busy(0);
     }
     /**
@@ -64,8 +66,8 @@ public class Menu extends javax.swing.JFrame {
         this.lblHora.setText(dt.gethoraHM());
     }
     
-    private void barra(){
-        this.lblEstado.setText(estado);
+    private void barraEstado(){
+        this.lblEstado.setText(barra.getBarra());
     }
     
     /**
@@ -77,11 +79,13 @@ public class Menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jDesktopPane1 = new javax.swing.JDesktopPane();
+        p = new javax.swing.JDesktopPane();
         lblEstado = new javax.swing.JLabel();
         lblHora = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         btnUsuario = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
+        btnUsuarios = new javax.swing.JMenuItem();
         btnCerrarSesion = new javax.swing.JMenuItem();
         btnCerrar = new javax.swing.JMenuItem();
 
@@ -95,6 +99,18 @@ public class Menu extends javax.swing.JFrame {
         lblHora.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnUsuario.setText("Usuario");
+
+        jMenu1.setText("Administrador");
+
+        btnUsuarios.setText("Gestor de Usuarios");
+        btnUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUsuariosActionPerformed(evt);
+            }
+        });
+        jMenu1.add(btnUsuarios);
+
+        btnUsuario.add(jMenu1);
 
         btnCerrarSesion.setText("Cerrar Sesión");
         btnCerrarSesion.addActionListener(new java.awt.event.ActionListener() {
@@ -120,7 +136,7 @@ public class Menu extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1)
+            .addComponent(p)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(lblEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -129,7 +145,7 @@ public class Menu extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jDesktopPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addComponent(p, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(lblEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
@@ -149,6 +165,14 @@ public class Menu extends javax.swing.JFrame {
         new Login().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
+
+    private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
+        // TODO add your handling code here:
+        Usuarios usuario=new Usuarios();
+        p.add(usuario);
+        usuario.setTitle("Gestor de Usuarios");
+        usuario.setVisible(true);
+    }//GEN-LAST:event_btnUsuariosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -190,7 +214,7 @@ public class Menu extends javax.swing.JFrame {
         @Override
         public void run() {
             reloj();
-            barra();
+            barraEstado();
             //
 //            cargaTablaInforme();
 //            try {
@@ -207,9 +231,11 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenuItem btnCerrar;
     private javax.swing.JMenuItem btnCerrarSesion;
     private javax.swing.JMenu btnUsuario;
-    private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JMenuItem btnUsuarios;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JLabel lblEstado;
     private javax.swing.JLabel lblHora;
+    private javax.swing.JDesktopPane p;
     // End of variables declaration//GEN-END:variables
 }

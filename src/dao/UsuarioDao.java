@@ -46,7 +46,7 @@ public class UsuarioDao {
                     + "clave,"
                     + "privilegio,"
                     + "enabled"
-                    + " FROM usuario ORDER BY id");
+                    + " FROM usuario ORDER BY idUsuario");
             try (ResultSet res = pstm.executeQuery()) {
                 int increment = 0;
                 while(res.next()){
@@ -85,6 +85,66 @@ public class UsuarioDao {
         try {
             getUsuario = getConnection().prepareStatement("SELECT * FROM usuario WHERE idUsuario = ?");
             getUsuario.setString(1, usuario.getIdUsuario());
+            result = getUsuario.executeQuery();
+            if (result.next()) {
+//idUsuario, rut, nombre, apellido, usuario, clave, privilegio, enabled
+                usuario.setIdUsuario(result.getString("idUsuario"));
+                usuario.setRut(result.getString("rut"));
+                usuario.setNombre(result.getString("nombre"));
+                usuario.setApellido(result.getString("apellido"));
+                usuario.setUsuario(result.getString("usuario"));
+                usuario.setClave(result.getString("clave"));
+                usuario.setPrivilegio(result.getString("privilegio"));
+                usuario.setEnabled(result.getString("enabled"));
+                result.close();
+            } else {
+                return false;
+            }
+            closeConnection();
+            return true;
+        } catch (SQLException se) {
+            System.err.println("Se ha producido un error de BD.");
+            System.err.println(se.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean findByRut(Usuario usuario) {
+        PreparedStatement getUsuario;
+        ResultSet result = null;
+        try {
+            getUsuario = getConnection().prepareStatement("SELECT * FROM usuario WHERE rut = ?");
+            getUsuario.setString(1, usuario.getRut());
+            result = getUsuario.executeQuery();
+            if (result.next()) {
+//idUsuario, rut, nombre, apellido, usuario, clave, privilegio, enabled
+                usuario.setIdUsuario(result.getString("idUsuario"));
+                usuario.setRut(result.getString("rut"));
+                usuario.setNombre(result.getString("nombre"));
+                usuario.setApellido(result.getString("apellido"));
+                usuario.setUsuario(result.getString("usuario"));
+                usuario.setClave(result.getString("clave"));
+                usuario.setPrivilegio(result.getString("privilegio"));
+                usuario.setEnabled(result.getString("enabled"));
+                result.close();
+            } else {
+                return false;
+            }
+            closeConnection();
+            return true;
+        } catch (SQLException se) {
+            System.err.println("Se ha producido un error de BD.");
+            System.err.println(se.getMessage());
+            return false;
+        }
+    }
+    
+    public boolean findByUsuario(Usuario usuario) {
+        PreparedStatement getUsuario;
+        ResultSet result = null;
+        try {
+            getUsuario = getConnection().prepareStatement("SELECT * FROM usuario WHERE usuario = ?");
+            getUsuario.setString(1, usuario.getUsuario());
             result = getUsuario.executeQuery();
             if (result.next()) {
 //idUsuario, rut, nombre, apellido, usuario, clave, privilegio, enabled
@@ -215,7 +275,7 @@ public class UsuarioDao {
 
             if (usuario.getIdUsuario() != null) {
                 delUsuario = getConnection().prepareStatement(
-                        "DELETE FROM usuario WHERE id_usuario=?");
+                        "DELETE FROM usuario WHERE idUsuario=?");
                 delUsuario.setString(1, usuario.getIdUsuario());
                 delUsuario.executeUpdate();
             }
