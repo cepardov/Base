@@ -88,6 +88,8 @@ public class Menu extends javax.swing.JFrame {
         btnUsuarios = new javax.swing.JMenuItem();
         btnCerrarSesion = new javax.swing.JMenuItem();
         btnCerrar = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        btnFabricantes = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -129,6 +131,18 @@ public class Menu extends javax.swing.JFrame {
         btnUsuario.add(btnCerrar);
 
         jMenuBar1.add(btnUsuario);
+
+        jMenu2.setText("Catálogo");
+
+        btnFabricantes.setText("Fabricantes");
+        btnFabricantes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFabricantesActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnFabricantes);
+
+        jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
 
@@ -172,6 +186,14 @@ public class Menu extends javax.swing.JFrame {
         usuario.setTitle("Gestor de Usuarios");
         usuario.setVisible(true);
     }//GEN-LAST:event_btnUsuariosActionPerformed
+
+    private void btnFabricantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFabricantesActionPerformed
+        // TODO add your handling code here:
+        Fabricante fabricante=new Fabricante();
+        p.add(fabricante);
+        fabricante.setTitle("Gestor de Fabricantes");
+        fabricante.setVisible(true);
+    }//GEN-LAST:event_btnFabricantesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -229,9 +251,11 @@ public class Menu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem btnCerrar;
     private javax.swing.JMenuItem btnCerrarSesion;
+    private javax.swing.JMenuItem btnFabricantes;
     private javax.swing.JMenu btnUsuario;
     private javax.swing.JMenuItem btnUsuarios;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
     public javax.swing.JLabel lblEstado;
     private javax.swing.JLabel lblHora;
