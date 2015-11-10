@@ -19,6 +19,8 @@ package vista;
 
 import beans.UsuarioBeans;
 import java.awt.Cursor;
+import java.awt.Image;
+import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
 import sistema.Service;
@@ -31,12 +33,28 @@ import utilidades.DateTime;
 public class Menu extends javax.swing.JFrame {
     UsuarioBeans usuariobeans=new UsuarioBeans();
     Usuarios usuario=new Usuarios();
+    Fabricante fabricante=new Fabricante();
+    Proveedor proveedor=new Proveedor();
+    Ejecutivo ejecutivo = new Ejecutivo();
     DateTime dt=new DateTime();
     Timer timer;
     
+    String loginId = null;
+    String loginNombre = null;
+    String loginApellido = null;
+    String loginUsuario = null;
+    String loginClave = null;//Encriptado
+    String loginPrivilegio = null;
+    
     public Menu() {}
-    public Menu(String nombre, String apellido, String usuario, String privilegio, String enabled) {
+    public Menu(String idUsuario, String nombre, String apellido, String usuario,String clave, String privilegio, String enabled) {
         initComponents();
+        loginId = idUsuario;
+        loginNombre = nombre;
+        loginApellido = apellido;
+        loginUsuario = usuario;
+        loginClave = clave;
+        loginPrivilegio = privilegio;
         this.busy(1);
         timer = new Timer();        
         timer.schedule(new RemindTask(), 0, 15000);
@@ -62,14 +80,26 @@ public class Menu extends javax.swing.JFrame {
     }
     
     private void reloj(){
-        this.lblHora.setText(dt.gethoraHM());
+//        this.lblHora.setText(dt.gethoraHM());
     }
     
     private void barraEstado(){
         usuario.lblErrorBusqueda.setText("");
-        this.lblEstado.setText("Barra Estado");
+//        this.lblEstado.setText("Barra Estado");
     }
     
+    private void reset(){
+        fabricante.lblErrorBusqueda.setText("");
+        proveedor.lblErrorBusqueda.setText("");
+        ejecutivo.lblErrorBusqueda.setText("");
+    }
+    
+    @Override
+    public Image getIconImage() {
+        Image retValue = Toolkit.getDefaultToolkit().
+                getImage(ClassLoader.getSystemResource("iconos/menu.png"));
+        return retValue;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -80,8 +110,6 @@ public class Menu extends javax.swing.JFrame {
     private void initComponents() {
 
         p = new javax.swing.JDesktopPane();
-        lblEstado = new javax.swing.JLabel();
-        lblHora = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         btnUsuario = new javax.swing.JMenu();
         jMenu1 = new javax.swing.JMenu();
@@ -89,16 +117,17 @@ public class Menu extends javax.swing.JFrame {
         btnCerrarSesion = new javax.swing.JMenuItem();
         btnCerrar = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        btnCategorias = new javax.swing.JMenuItem();
         btnFabricantes = new javax.swing.JMenuItem();
+        jMenu4 = new javax.swing.JMenu();
+        btnProductos = new javax.swing.JMenuItem();
+        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
-
-        lblEstado.setText("Barra Estado");
-        lblEstado.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        lblHora.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblHora.setText("HH:mm");
-        lblHora.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        setIconImage(getIconImage());
 
         btnUsuario.setText("Usuario");
 
@@ -134,6 +163,22 @@ public class Menu extends javax.swing.JFrame {
 
         jMenu2.setText("Catálogo");
 
+        jMenuItem1.setText("Proveedores");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        btnCategorias.setText("Categorías");
+        btnCategorias.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCategoriasActionPerformed(evt);
+            }
+        });
+        jMenu2.add(btnCategorias);
+
         btnFabricantes.setText("Fabricantes");
         btnFabricantes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -144,26 +189,49 @@ public class Menu extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu2);
 
+        jMenu4.setText("Modulos");
+
+        btnProductos.setText("Gestor de Productos");
+        btnProductos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProductosActionPerformed(evt);
+            }
+        });
+        jMenu4.add(btnProductos);
+
+        jMenuItem4.setText("Gestor de Ventas");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
+        jMenu4.add(jMenuItem4);
+
+        jMenuBar1.add(jMenu4);
+
+        jMenu3.setText("Contactos");
+
+        jMenuItem2.setText("Ejecutivos Proveedor");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu3.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu3);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(p)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(lblEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblHora, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(p, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(p, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblEstado, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
-                    .addComponent(lblHora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+            .addComponent(p, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
         );
 
         pack();
@@ -176,7 +244,8 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
         // TODO add your handling code here:
-        new Login().setVisible(true);
+        Login login=new Login();
+        login.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
@@ -189,11 +258,60 @@ public class Menu extends javax.swing.JFrame {
 
     private void btnFabricantesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFabricantesActionPerformed
         // TODO add your handling code here:
-        Fabricante fabricante=new Fabricante();
+        
         p.add(fabricante);
+        fabricante.limpiar();
         fabricante.setTitle("Gestor de Fabricantes");
         fabricante.setVisible(true);
     }//GEN-LAST:event_btnFabricantesActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        
+        p.add(proveedor);
+        proveedor.setTitle("Gestor Proveedores");
+        proveedor.limpiar();
+        proveedor.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        p.add(ejecutivo);
+        ejecutivo.setTitle("Gestor Ejecutivos");
+        ejecutivo.limpiar();
+        ejecutivo.setVisible(true);
+        
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void btnCategoriasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCategoriasActionPerformed
+        // TODO add your handling code here:
+        Categorias categorias=new Categorias();
+        p.add(categorias);
+        categorias.setTitle("Gestor de Categorías");
+//        categorias.limpiar();
+        categorias.setVisible(true);
+    }//GEN-LAST:event_btnCategoriasActionPerformed
+
+    private void btnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductosActionPerformed
+        // TODO add your handling code here:
+        Producto producto=new Producto();
+        p.add(producto);
+        producto.setSize(p.getSize());
+        producto.setTitle("Gestión de Productos");
+        producto.setVisible(true);
+    }//GEN-LAST:event_btnProductosActionPerformed
+
+    
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // TODO add your handling code here:       
+        Venta venta = new Venta(loginId,loginNombre,loginApellido,loginUsuario,loginClave,loginPrivilegio);
+        p.add(venta);
+        venta.setSize(p.getSize());
+//        informepericial5.setSize(d.getSize());
+        venta.setTitle("Gestor de Ventas");
+        venta.setInstanciaVenta(true);
+        venta.setVisible(true);
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -236,6 +354,7 @@ public class Menu extends javax.swing.JFrame {
         public void run() {
             reloj();
             barraEstado();
+            reset();
             //
 //            cargaTablaInforme();
 //            try {
@@ -249,16 +368,21 @@ public class Menu extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem btnCategorias;
     private javax.swing.JMenuItem btnCerrar;
     private javax.swing.JMenuItem btnCerrarSesion;
     private javax.swing.JMenuItem btnFabricantes;
+    private javax.swing.JMenuItem btnProductos;
     private javax.swing.JMenu btnUsuario;
     private javax.swing.JMenuItem btnUsuarios;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenu jMenu4;
     private javax.swing.JMenuBar jMenuBar1;
-    public javax.swing.JLabel lblEstado;
-    private javax.swing.JLabel lblHora;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JDesktopPane p;
     // End of variables declaration//GEN-END:variables
 }

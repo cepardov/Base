@@ -40,6 +40,8 @@ public class Login extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Inicio de sesión - NeoMarket");
+        this.txtTitulo.setTitulo("Inicio de sesión - NeoMarket");
+        this.txtTitulo.hideCloseButton();
     }
     
     private void busy(int estado){
@@ -56,17 +58,54 @@ public class Login extends javax.swing.JFrame {
         }
     }
     
+    private boolean isTarjeta(){
+        String cadena = this.txtusuario.getText();
+        this.txtusuario.setText("");
+        try{
+            int indexOf = cadena.indexOf("%");
+            if(indexOf>-1){
+                //verdadero
+                this.iniciaSesionTarjeta(cadena);
+                return true;
+            } else {
+                //falso
+                this.txtusuario.setText(cadena);
+                this.txtclave.requestFocus();
+                return false;
+            }
+        } catch (Exception se){
+            System.out.println("Error al detectar terjeta:\n"+se);
+        }
+        return false;
+    }
+    
+    private void iniciaSesionTarjeta(String cadena){
+        String usuario = cadena.substring(0,cadena.indexOf("%"));
+        String clave = cadena.substring(cadena.indexOf("%")+1,cadena.length());
+        
+        this.txtusuario.setText(usuario);
+        this.txtclave.setText(clave);
+        
+        this.iniciarSesion();
+    }
+    
+    int intentos = 3;
     private void iniciarSesion(){
         //Obtención de datos ingresados
-        int intentos = 3;
         if (intentos==0){
             dispose();
             JOptionPane.showMessageDialog(null, "Inicio de sesión denegado!\nContacte con administrador del sistema...", "Error de Inicio de sesión.", JOptionPane.ERROR_MESSAGE);
-            System.exit(0);
+            new Service().cerrarApp();
         }else if(this.txtusuario.getText().isEmpty()){
+            this.setVisible(false);
             JOptionPane.showMessageDialog(null, "Nombre de usuario no es indicado.\nIngrese su nombre de usuario y contraseña para ingresar al sistema.", "Error de Inicio de sesión.", JOptionPane.ERROR_MESSAGE);
+            this.setVisible(true);
+            this.txtusuario.requestFocus();
         } else if (this.txtclave.getText().isEmpty()){
+            this.setVisible(false);
             JOptionPane.showMessageDialog(null, "Contraseña no es indicado.\nIngrese su contraseña y nombre de usuario para ingresar al sistema.", "Error de Inicio de sesión.", JOptionPane.WARNING_MESSAGE);
+            this.setVisible(true);
+            this.txtclave.requestFocus();
         } else {
             //Extrae información ingresada-
             String usuario=this.txtusuario.getText();
@@ -79,15 +118,19 @@ public class Login extends javax.swing.JFrame {
             if(u==null){
                 intentos=intentos-1;
                 System.out.println("Error inicio de sesión");
-                JOptionPane.showMessageDialog(this, "El nombre de usuario y/o contraseña no son validos.\nIntentos restantes "+intentos);
+                this.setVisible(false);
+                JOptionPane.showMessageDialog(null, "El nombre de usuario y/o contraseña no son validos.\nIntentos restantes "+intentos, "Error de Inicio de sesión.", JOptionPane.ERROR_MESSAGE);
+                this.setVisible(true);
+                this.txtclave.requestFocus();
             }else if(u!=null){
                 this.setVisible(false);
                 if("false".equals(u.getEnabled())){
                     JOptionPane.showMessageDialog(null,"Los administradores del sistema han desabilitado el acceso a "+u.getNombre()+" "+u.getApellido()+". "
                             + "\nComuniquese con el administrador del sistema.", "Inicio de sesión denegado", JOptionPane.ERROR_MESSAGE);
+                    this.limpiar();
                     this.setVisible(true);
                 } else {
-                    Menu menu = new Menu(u.getNombre(),u.getApellido(),u.getUsuario(),u.getPrivilegio(),u.getEnabled());
+                    Menu menu = new Menu(u.getIdUsuario(),u.getNombre(),u.getApellido(),u.getUsuario(),u.getClave(),u.getPrivilegio(),u.getEnabled());
                     menu.setTitle("NeoMarket - Usuario ["+u.getNombre()+" "+u.getApellido()+"] - "+u.getPrivilegio());
                     menu.setExtendedState(JFrame.MAXIMIZED_BOTH);
                     menu.setVisible(true);
@@ -96,6 +139,12 @@ public class Login extends javax.swing.JFrame {
         }
     }
     
+    private void limpiar(){
+        this.txtusuario.setText("");
+        this.txtclave.setText("");
+        this.txtusuario.requestFocus();
+    }
+   
     @Override
     public Image getIconImage() {
         Image retValue = Toolkit.getDefaultToolkit().
@@ -112,55 +161,95 @@ public class Login extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        txtusuario = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
-        txtclave = new javax.swing.JPasswordField();
+        panelImage4 = new elaprendiz.gui.panel.PanelImage();
+        panelCurves1 = new elaprendiz.gui.panel.PanelCurves();
+        txtTitulo = new elaprendiz.gui.varios.TitleBar();
+        panelImage5 = new elaprendiz.gui.panel.PanelImage();
+        panelImage6 = new elaprendiz.gui.panel.PanelImage();
+        panelImage7 = new elaprendiz.gui.panel.PanelImage();
+        labelMetric1 = new elaprendiz.gui.label.LabelMetric();
+        labelMetric2 = new elaprendiz.gui.label.LabelMetric();
         btnInicioSesion = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        btnCerrar = new javax.swing.JButton();
+        txtclave = new elaprendiz.gui.passwordField.PasswordFieldRoundIcon();
+        txtusuario = new elaprendiz.gui.textField.TextFieldRoundIcon();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setIconImage(getIconImage());
         setResizable(false);
+        setType(java.awt.Window.Type.POPUP);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("ID de Usuario"));
+        panelImage4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/background.png")));
 
-        txtusuario.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtusuarioFocusGained(evt);
+        txtTitulo.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        txtTitulo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                txtTituloMouseClicked(evt);
             }
         });
-        txtusuario.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyTyped(java.awt.event.KeyEvent evt) {
-                txtusuarioKeyTyped(evt);
-            }
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtusuarioKeyPressed(evt);
+        panelCurves1.add(txtTitulo, java.awt.BorderLayout.PAGE_START);
+
+        javax.swing.GroupLayout panelImage5Layout = new javax.swing.GroupLayout(panelImage5);
+        panelImage5.setLayout(panelImage5Layout);
+        panelImage5Layout.setHorizontalGroup(
+            panelImage5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panelImage5Layout.setVerticalGroup(
+            panelImage5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 203, Short.MAX_VALUE)
+        );
+
+        panelCurves1.add(panelImage5, java.awt.BorderLayout.LINE_END);
+
+        javax.swing.GroupLayout panelImage6Layout = new javax.swing.GroupLayout(panelImage6);
+        panelImage6.setLayout(panelImage6Layout);
+        panelImage6Layout.setHorizontalGroup(
+            panelImage6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 100, Short.MAX_VALUE)
+        );
+        panelImage6Layout.setVerticalGroup(
+            panelImage6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 203, Short.MAX_VALUE)
+        );
+
+        panelCurves1.add(panelImage6, java.awt.BorderLayout.LINE_START);
+
+        labelMetric1.setText("Usuario");
+        labelMetric1.setDistanciaDeSombra(2);
+        labelMetric1.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+
+        labelMetric2.setText("Contraseña");
+        labelMetric2.setDistanciaDeSombra(2);
+        labelMetric2.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
+
+        btnInicioSesion.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        btnInicioSesion.setText("Iniciar Sesión");
+        btnInicioSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInicioSesionActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(txtusuario)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(txtusuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Contraseña"));
+        btnCerrar.setFont(new java.awt.Font("Ubuntu", 0, 14)); // NOI18N
+        btnCerrar.setText("Salir");
+        btnCerrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCerrarActionPerformed(evt);
+            }
+        });
 
         txtclave.setText("password");
+        txtclave.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        txtclave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/key.png"))); // NOI18N
         txtclave.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 txtclaveFocusGained(evt);
+            }
+        });
+        txtclave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtclaveActionPerformed(evt);
             }
         });
         txtclave.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -169,94 +258,102 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+        txtusuario.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
+        txtusuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/iconos/user.png"))); // NOI18N
+        txtusuario.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtusuarioFocusGained(evt);
+            }
+        });
+        txtusuario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtusuarioKeyPressed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout panelImage7Layout = new javax.swing.GroupLayout(panelImage7);
+        panelImage7.setLayout(panelImage7Layout);
+        panelImage7Layout.setHorizontalGroup(
+            panelImage7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelImage7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtclave, javax.swing.GroupLayout.DEFAULT_SIZE, 342, Short.MAX_VALUE)
+                .addGroup(panelImage7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtclave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(panelImage7Layout.createSequentialGroup()
+                        .addComponent(btnInicioSesion)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addComponent(btnCerrar))
+                    .addGroup(panelImage7Layout.createSequentialGroup()
+                        .addGroup(panelImage7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtusuario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(txtclave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+        panelImage7Layout.setVerticalGroup(
+            panelImage7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelImage7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(labelMetric1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtusuario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(labelMetric2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(5, 5, 5)
+                .addComponent(txtclave, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelImage7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnInicioSesion)
+                    .addComponent(btnCerrar))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
-        btnInicioSesion.setText("Iniciar Sesión");
-        btnInicioSesion.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInicioSesionActionPerformed(evt);
-            }
-        });
+        panelCurves1.add(panelImage7, java.awt.BorderLayout.CENTER);
 
-        jButton1.setText("Salir");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout panelImage4Layout = new javax.swing.GroupLayout(panelImage4);
+        panelImage4.setLayout(panelImage4Layout);
+        panelImage4Layout.setHorizontalGroup(
+            panelImage4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(panelCurves1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        panelImage4Layout.setVerticalGroup(
+            panelImage4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(panelImage4Layout.createSequentialGroup()
+                .addComponent(panelCurves1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnInicioSesion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1)))
-                .addContainerGap())
+            .addComponent(panelImage4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(btnInicioSesion))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(panelImage4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txtusuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtusuarioFocusGained
+    private void btnInicioSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioSesionActionPerformed
         // TODO add your handling code here:
-        this.txtusuario.setText("");
-    }//GEN-LAST:event_txtusuarioFocusGained
+        this.busy(1);
+        this.iniciarSesion();
+        this.busy(0);
+        
+    }//GEN-LAST:event_btnInicioSesionActionPerformed
 
-    private void txtusuarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtusuarioKeyTyped
+    private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
         // TODO add your handling code here:
+        new Service().cerrarApp();
+    }//GEN-LAST:event_btnCerrarActionPerformed
 
-    }//GEN-LAST:event_txtusuarioKeyTyped
-
-    private void txtusuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtusuarioKeyPressed
+    private void txtTituloMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_txtTituloMouseClicked
         // TODO add your handling code here:
-        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            // Enter was pressed. Your code goes here.
-            this.txtclave.requestFocus();
-        }
-        //        this.txtusuario.setText(KeyEvent.getKeyText(evt.getKeyCode()));
-    }//GEN-LAST:event_txtusuarioKeyPressed
-
-    private void txtclaveFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtclaveFocusGained
-        // TODO add your handling code here:
-        this.txtclave.setText("");
-    }//GEN-LAST:event_txtclaveFocusGained
+    }//GEN-LAST:event_txtTituloMouseClicked
 
     private void txtclaveKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtclaveKeyPressed
         // TODO add your handling code here:
@@ -266,15 +363,27 @@ public class Login extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtclaveKeyPressed
 
-    private void btnInicioSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInicioSesionActionPerformed
+    private void txtclaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtclaveActionPerformed
         // TODO add your handling code here:
-        this.iniciarSesion();
-    }//GEN-LAST:event_btnInicioSesionActionPerformed
+    }//GEN-LAST:event_txtclaveActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void txtusuarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtusuarioKeyPressed
         // TODO add your handling code here:
-        new Service().cerrarApp();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            // Enter was pressed. Your code goes here.
+            this.isTarjeta();
+        }
+    }//GEN-LAST:event_txtusuarioKeyPressed
+
+    private void txtusuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtusuarioFocusGained
+        // TODO add your handling code here:
+        this.txtusuario.setText("");
+    }//GEN-LAST:event_txtusuarioFocusGained
+
+    private void txtclaveFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtclaveFocusGained
+        // TODO add your handling code here:
+        this.txtclave.setText("");
+    }//GEN-LAST:event_txtclaveFocusGained
 
     /**
      * @param args the command line arguments
@@ -310,11 +419,17 @@ public class Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCerrar;
     private javax.swing.JButton btnInicioSesion;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPasswordField txtclave;
-    private javax.swing.JTextField txtusuario;
+    private elaprendiz.gui.label.LabelMetric labelMetric1;
+    private elaprendiz.gui.label.LabelMetric labelMetric2;
+    private elaprendiz.gui.panel.PanelCurves panelCurves1;
+    private elaprendiz.gui.panel.PanelImage panelImage4;
+    private elaprendiz.gui.panel.PanelImage panelImage5;
+    private elaprendiz.gui.panel.PanelImage panelImage6;
+    private elaprendiz.gui.panel.PanelImage panelImage7;
+    private elaprendiz.gui.varios.TitleBar txtTitulo;
+    private elaprendiz.gui.passwordField.PasswordFieldRoundIcon txtclave;
+    private elaprendiz.gui.textField.TextFieldRoundIcon txtusuario;
     // End of variables declaration//GEN-END:variables
 }
